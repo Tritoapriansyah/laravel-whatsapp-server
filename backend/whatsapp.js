@@ -9,7 +9,7 @@ import makeWASocket, {
     DisconnectReason,
     delay,
 } from '@adiwajshing/baileys'
-import {smsg} from './lib/func'
+import {smsg} from './lib/func.js'
 import { toDataURL } from 'qrcode'
 import __dirname from './dirname.js'
 import response from './response.js'
