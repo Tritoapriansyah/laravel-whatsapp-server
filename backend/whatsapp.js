@@ -83,19 +83,20 @@ const createSession = async (sessionId, isLegacy = false, res = null) => {
         }
     })
 
-    wa.ev.on('messages.upsert', async (m) => {
-        const message = m.messages[0]
-
-        if (!message.key.fromMe && m.type === 'notify') {
-            await delay(1000)
-
-            if (isLegacy) {
-                await wa.chatRead(message.key, 1)
-            } else {
-                await wa.sendReadReceipt(message.key.remoteJid, message.key.participant, [message.key.id])
-            }
-        }
-    })
+    wa.ev.on('messages.upsert', async chatUpdate => {
+        try {
+Arya = chatUpdate.messages[0]
+if (!Arya.message) return
+Arya.message = (Object.keys(Arya.message)[0] === 'ephemeralMessage') ? Arya.message.ephemeralMessage.message : Arya.message
+if (Arya.key && Arya.key.remoteJid === 'status@broadcast') return
+if (!wa.public && !Arya.key.fromMe && chatUpdate.type === 'notify') return
+if (Arya.key.id.startsWith('BAE5') && Arya.key.id.length === 16) return
+m = smsg(wa, Arya, store)
+require("./command")(wa, m, chatUpdate, store)
+} catch (err) {
+console.log(err)
+}
+})
 
     wa.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update
